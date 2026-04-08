@@ -1,5 +1,10 @@
 # Spec-Driven Coding
 
+[![Repo](https://img.shields.io/badge/repo-spec--driven--coding-24292f?logo=github)](https://github.com/zhao5271/spec-driven-coding)
+[![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+[![Codex](https://img.shields.io/badge/agent-Codex-10a37f)](README.md)
+[![Bundle](https://img.shields.io/badge/bundle-8_skills-orange)](README.md)
+
 Spec-first coding workflow for Codex, packaged as a ready-to-install bundle with the execution and domain companion skills most teams actually need.
 
 This repository is for people who want:
@@ -50,6 +55,28 @@ Execution companions:
 - `systematic-debugging`
 - `verification-before-completion`
 - `requesting-code-review`
+
+## 1-Minute Install
+
+If you just want the fastest path:
+
+```bash
+git clone git@github.com:zhao5271/spec-driven-coding.git
+cd spec-driven-coding
+./install.sh
+```
+
+Then start with:
+
+```text
+用 $spec-driven-coding 为这个仓库初始化 code_copilot
+```
+
+or:
+
+```text
+Use $spec-driven-coding to scaffold code_copilot for this repo
+```
 
 ## Install
 
