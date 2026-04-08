@@ -4,16 +4,16 @@ Use this checklist before publishing a new version of the bundle.
 
 ## 1. Update The Main Skill
 
-- [ ] Finish changes in `skills/spec-driven-coding/`
+- [ ] Finish changes in the root skill files: `SKILL.md`, `agents/`, `references/`, and `scripts/`
 - [ ] Re-check `SKILL.md`, references, and scripts for consistency
-- [ ] Validate the bundled main skill with your local `quick_validate.py` from the Codex `skill-creator` system skill
+- [ ] Validate the root main skill with your local `quick_validate.py` from the Codex `skill-creator` system skill
 - [ ] Run:
 
 ```bash
-python3 skills/spec-driven-coding/scripts/create_change.py --help
-python3 skills/spec-driven-coding/scripts/scaffold_package.py --help
+python3 scripts/create_change.py --help
+python3 scripts/scaffold_package.py --help
 # Example:
-# python3 "$HOME/.codex/skills/.system/skill-creator/scripts/quick_validate.py" skills/spec-driven-coding
+# python3 "$HOME/.codex/skills/.system/skill-creator/scripts/quick_validate.py" .
 ```
 
 ## 2. Verify Bundled Companion Skills
@@ -39,12 +39,14 @@ TMPDIR=$(mktemp -d /tmp/spec-bundle-install.XXXXXX)
 find "$TMPDIR" -maxdepth 1 -mindepth 1 -type d | sort
 ```
 
-- [ ] Confirm all expected skill folders are installed
+- [ ] Confirm `spec-driven-coding` is installed from the root skill files
+- [ ] Confirm all expected companion skill folders are installed
 - [ ] Re-run with `--force` if you changed overwrite behavior
 
 ## 4. Review README And Prompt Examples
 
 - [ ] README still matches the actual bundle contents
+- [ ] Root `npx skills add zhao5271/spec-driven-coding` install path still matches the repo layout
 - [ ] `1-Minute Install` commands still work
 - [ ] Prompt cheat sheet still matches the intended workflow
 - [ ] Repository layout section matches the real directory structure

@@ -5,6 +5,7 @@ set -euo pipefail
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 SOURCE_DIR="$ROOT_DIR/skills"
 TARGET_DIR="${CODEX_HOME:-$HOME/.codex}/skills"
+MAIN_SKILL_NAME="spec-driven-coding"
 FORCE=0
 
 while [[ $# -gt 0 ]]; do
@@ -36,6 +37,27 @@ EOF
 done
 
 mkdir -p "$TARGET_DIR"
+
+main_target_path="$TARGET_DIR/$MAIN_SKILL_NAME"
+
+if [[ -e "$main_target_path" ]]; then
+  if [[ "$FORCE" -eq 1 ]]; then
+    rm -rf "$main_target_path"
+  else
+    echo "Target already exists: $main_target_path" >&2
+    echo "Re-run with --force to overwrite." >&2
+    exit 1
+  fi
+fi
+
+mkdir -p "$main_target_path"
+
+cp -R "$ROOT_DIR/SKILL.md" "$main_target_path/"
+cp -R "$ROOT_DIR/agents" "$main_target_path/"
+cp -R "$ROOT_DIR/references" "$main_target_path/"
+cp -R "$ROOT_DIR/scripts" "$main_target_path/"
+
+echo "Installed: $MAIN_SKILL_NAME -> $main_target_path"
 
 for skill_dir in "$SOURCE_DIR"/*; do
   [[ -d "$skill_dir" ]] || continue

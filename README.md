@@ -5,7 +5,10 @@
 [![Codex](https://img.shields.io/badge/agent-Codex-10a37f)](README.md)
 [![Bundle](https://img.shields.io/badge/bundle-8_skills-orange)](README.md)
 
-Spec-first coding workflow for Codex, packaged as a ready-to-install bundle with the execution and domain companion skills most teams actually need.
+Spec-first coding workflow for Codex, packaged in two usable forms:
+
+- a standard root skill for `npx skills add zhao5271/spec-driven-coding`
+- a ready-to-install bundle with the execution and domain companion skills most teams actually need
 
 This repository is for people who want:
 
@@ -58,7 +61,13 @@ Execution companions:
 
 ## 1-Minute Install
 
-If you just want the fastest path:
+If you want the single main skill through the Skills CLI:
+
+```bash
+npx skills add zhao5271/spec-driven-coding -g -y
+```
+
+If you want the full bundle in one step:
 
 ```bash
 git clone git@github.com:zhao5271/spec-driven-coding.git
@@ -80,6 +89,18 @@ Use $spec-driven-coding to scaffold code_copilot for this repo
 
 ## Install
 
+### Root Skill via Skills CLI
+
+Install the main workflow skill directly from GitHub:
+
+```bash
+npx skills add zhao5271/spec-driven-coding -g -y
+```
+
+This path targets the root `spec-driven-coding` skill.
+
+### Full Bundle via Git Clone
+
 Clone the repository:
 
 ```bash
@@ -87,13 +108,13 @@ git clone git@github.com:zhao5271/spec-driven-coding.git
 cd spec-driven-coding
 ```
 
-Install into the default Codex skills directory:
+Install the bundle into the default Codex skills directory:
 
 ```bash
 ./install.sh
 ```
 
-Default target:
+Default bundle target:
 
 ```text
 ${CODEX_HOME:-$HOME/.codex}/skills
@@ -198,19 +219,22 @@ This is a risky change. Use $requesting-code-review before merge
 
 ```text
 spec-driven-coding/
+├── SKILL.md
+├── agents/
+├── references/
+├── scripts/
 ├── install.sh
 ├── LICENSE
 ├── README.md
 ├── THIRD_PARTY_NOTICES.md
 └── skills/
-    ├── spec-driven-coding/
     ├── frontend-design/
     ├── api-design-principles/
     ├── postgresql-table-design/
-    ├── test-driven-development/
+    ├── requesting-code-review/
     ├── systematic-debugging/
-    ├── verification-before-completion/
-    └── requesting-code-review/
+    ├── test-driven-development/
+    └── verification-before-completion/
 ```
 
 ## FAQ
@@ -229,6 +253,11 @@ Because most users want the workflow and the minimum useful companions together:
 - review request for risky changes
 
 Shipping them together makes the bundle usable immediately.
+
+### Which install path should I use?
+
+- Use `npx skills add zhao5271/spec-driven-coding -g -y` if you only want the main workflow skill.
+- Use `git clone ... && ./install.sh` if you want the full bundle with companion skills.
 
 ### Does this bundle let `superpowers` replace the main workflow?
 

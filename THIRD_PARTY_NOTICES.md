@@ -24,7 +24,7 @@ The purpose of this file is transparency:
 
 | Skill | Notes |
 | --- | --- |
-| `spec-driven-coding` | This bundled copy is maintained in this repository and was adapted into a portable, publishable bundle form. |
+| `spec-driven-coding` | This repository's primary root skill is maintained here and published as the direct GitHub install target. |
 
 ## Important Boundary
 
