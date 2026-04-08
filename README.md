@@ -5,7 +5,7 @@
 [![Codex](https://img.shields.io/badge/agent-Codex-10a37f)](README.md)
 [![Bundle](https://img.shields.io/badge/bundle-8_skills-orange)](README.md)
 
-Spec-first coding workflow for Codex, packaged in two usable forms:
+Spec-first coding workflow for Codex. It is designed to work both as a `spec-driven development` workflow and as a practical `spec-first development` skill package, packaged in two usable forms:
 
 - a standard root skill for `npx skills add zhao5271/spec-driven-coding`
 - a ready-to-install bundle with the execution and domain companion skills most teams actually need

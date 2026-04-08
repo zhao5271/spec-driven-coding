@@ -22,15 +22,19 @@ description: >-
 
 ## Overview
 
-Use this skill to keep coding work grounded in explicit specs instead of ad hoc chat memory. Start with a small reusable package, write the change down, split it into verifiable tasks, then code against the written plan.
+Use this skill as a spec-driven development and spec-first development workflow for real coding work. Keep implementation grounded in explicit specs instead of ad hoc chat memory: start with a small reusable package, write the change down, split it into verifiable tasks, then code against the written plan.
 
 This skill is the primary workflow owner. If other process-heavy skills are also available, keep this skill in charge of change-package structure, `spec.md`, `tasks.md`, and Reverse Sync.
 
 Typical trigger phrases:
 
 - "set up spec-driven coding"
+- "spec-driven development"
+- "spec first development"
 - "create a change package"
+- "change package workflow"
 - "write the spec first"
+- "spec.md and tasks.md workflow"
 - "new feature with spec"
 - "refactor with spec"
 - "bugfix with spec"
