@@ -1,12 +1,36 @@
-# Spec-Driven Coding Bundle
+# Spec-Driven Coding
 
-Spec-first coding workflow for Codex, bundled with the execution-only companion skills needed for feature work, debugging, verification, and review.
+Spec-first coding workflow for Codex, packaged as a ready-to-install bundle with the execution and domain companion skills most teams actually need.
 
-This repo is meant to be a publish-ready, open-the-box bundle:
+This repository is for people who want:
 
-- `spec-driven-coding` is the main workflow skill
-- companion skills are bundled locally so users do not need to hunt them down one by one
-- install is a single script
+- a real `spec.md -> tasks.md -> implementation -> reverse sync` workflow
+- one install step instead of collecting multiple skills by hand
+- execution discipline without letting another process framework take over the main plan
+
+## Why
+
+Most AI coding sessions fail for boring reasons:
+
+- the plan only exists in chat history
+- implementation starts before scope is stable
+- debugging and validation happen too late
+- different helper skills pull the workflow in different directions
+
+This bundle fixes that by making one skill the workflow owner:
+
+- `spec-driven-coding` owns the change package, `spec.md`, `tasks.md`, and Reverse Sync
+- companion skills improve execution quality, not planning ownership
+
+## Features
+
+- Spec-first workflow for any repository
+- Change-package scaffolding via `code_copilot/changes/<change-name>/`
+- Explicit `spec.md`, `tasks.md`, and `log.md` flow
+- Reverse Sync rules when code drifts from plan
+- Bundled execution companions for TDD, debugging, verification, and review
+- Bundled domain companions for frontend, API, and PostgreSQL work
+- Portable bundle layout that installs into Codex with one script
 
 ## Included Skills
 
@@ -27,108 +51,42 @@ Execution companions:
 - `verification-before-completion`
 - `requesting-code-review`
 
-## What This Bundle Solves
+## Install
 
-Use this bundle when you want a spec-first workflow without letting other process-heavy skills take over the top-level plan.
-
-The intended split is:
-
-- `spec-driven-coding` owns `spec.md`, `tasks.md`, change packages, and Reverse Sync
-- bundled execution skills improve how code gets implemented, debugged, verified, and reviewed
-
-## Quick Start
-
-Clone the repo, then install all bundled skills into Codex:
+Clone the repository:
 
 ```bash
-git clone <your-repo-url>
-cd spec-driven-coding-bundle
+git clone git@github.com:zhao5271/spec-driven-coding.git
+cd spec-driven-coding
+```
+
+Install into the default Codex skills directory:
+
+```bash
 ./install.sh
 ```
 
-Default install target:
+Default target:
 
 ```text
 ${CODEX_HOME:-$HOME/.codex}/skills
 ```
 
-Install to a custom target:
+Install into a custom directory:
 
 ```bash
 ./install.sh --target /path/to/skills
 ```
 
-Overwrite an existing install:
+Overwrite existing skill folders:
 
 ```bash
 ./install.sh --force
 ```
 
-## Shortest Prompt Cheat Sheet
+## Usage
 
-These are the shortest prompts that still steer Codex into the intended workflow.
-
-### Initialize a Repository
-
-```text
-用 $spec-driven-coding 为这个仓库初始化 code_copilot
-```
-
-```text
-Use $spec-driven-coding to scaffold code_copilot for this repo
-```
-
-### Start a New Feature
-
-```text
-用 $spec-driven-coding 先为“用户批量导入”创建 change package，再按 TDD 实现
-```
-
-```text
-Use $spec-driven-coding to create a change package for "bulk user import", then implement it with TDD
-```
-
-### Start a Refactor
-
-```text
-用 $spec-driven-coding 先写 spec 和 tasks，再重构这个模块
-```
-
-```text
-Use $spec-driven-coding to write spec and tasks first, then refactor this module
-```
-
-### Fix a Bug
-
-```text
-用 $spec-driven-coding 先建 change package，用 $systematic-debugging 排查这个 bug
-```
-
-```text
-Use $spec-driven-coding to create a change package first, then use $systematic-debugging on this bug
-```
-
-### Finish and Verify
-
-```text
-用 $verification-before-completion 检查这个 change 是否真的可以收尾
-```
-
-```text
-Use $verification-before-completion before closing this change
-```
-
-### Ask for Review
-
-```text
-这个改动比较大，用 $requesting-code-review 做一次复核
-```
-
-```text
-This is a risky change. Use $requesting-code-review before merge
-```
-
-## Recommended Usage Patterns
+### Recommended Pairings
 
 New feature or refactor:
 
@@ -147,12 +105,76 @@ Large or risky change:
 - `$spec-driven-coding`
 - `$requesting-code-review`
 
+### Shortest Prompt Cheat Sheet
+
+Initialize a repository:
+
+```text
+用 $spec-driven-coding 为这个仓库初始化 code_copilot
+```
+
+```text
+Use $spec-driven-coding to scaffold code_copilot for this repo
+```
+
+Start a new feature:
+
+```text
+用 $spec-driven-coding 先为“用户批量导入”创建 change package，再按 TDD 实现
+```
+
+```text
+Use $spec-driven-coding to create a change package for "bulk user import", then implement it with TDD
+```
+
+Start a refactor:
+
+```text
+用 $spec-driven-coding 先写 spec 和 tasks，再重构这个模块
+```
+
+```text
+Use $spec-driven-coding to write spec and tasks first, then refactor this module
+```
+
+Fix a bug:
+
+```text
+用 $spec-driven-coding 先建 change package，用 $systematic-debugging 排查这个 bug
+```
+
+```text
+Use $spec-driven-coding to create a change package first, then use $systematic-debugging on this bug
+```
+
+Finish and verify:
+
+```text
+用 $verification-before-completion 检查这个 change 是否真的可以收尾
+```
+
+```text
+Use $verification-before-completion before closing this change
+```
+
+Request review:
+
+```text
+这个改动比较大，用 $requesting-code-review 做一次复核
+```
+
+```text
+This is a risky change. Use $requesting-code-review before merge
+```
+
 ## Repository Layout
 
 ```text
-spec-driven-coding-bundle/
+spec-driven-coding/
 ├── install.sh
+├── LICENSE
 ├── README.md
+├── THIRD_PARTY_NOTICES.md
 └── skills/
     ├── spec-driven-coding/
     ├── frontend-design/
@@ -164,8 +186,41 @@ spec-driven-coding-bundle/
     └── requesting-code-review/
 ```
 
-## Publishing Notes
+## FAQ
 
-- This bundle contains copied companion skills so users can install everything at once.
-- The bundled `spec-driven-coding` copy has been made portable by removing machine-specific skill paths.
-- If you publish this repo publicly, verify the redistribution terms of bundled third-party skills and preserve any upstream license files that are already included.
+### Is this only for one tech stack?
+
+No. `spec-driven-coding` is intentionally generic. It works best when you record the real project constraints in the generated `rules/` files instead of forcing one framework's conventions onto every repo.
+
+### Why bundle other skills instead of only shipping `spec-driven-coding`?
+
+Because most users want the workflow and the minimum useful companions together:
+
+- TDD for new implementation
+- systematic debugging for diagnosis
+- verification before claiming success
+- review request for risky changes
+
+Shipping them together makes the bundle usable immediately.
+
+### Does this bundle let `superpowers` replace the main workflow?
+
+No. The intended rule is the opposite:
+
+- `spec-driven-coding` owns the planning system
+- execution-only skills improve how you implement and validate
+
+### Can I remove bundled skills I do not want?
+
+Yes. The installer copies folders independently. You can delete any bundled skill directory before installation, or remove installed skills later.
+
+## License Notes
+
+This repository contains both original repository-authored files and bundled third-party skill copies.
+
+- The repository-authored files in the root of this repository are licensed under the MIT License. See [LICENSE](LICENSE).
+- Bundled third-party skill folders under `skills/` are not automatically relicensed by the root MIT license.
+- Any bundled skill that already includes its own license file keeps that license file in place.
+- For bundled third-party source notes and packaging-time provenance, see [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
+
+If you plan to republish or redistribute this repository, review the bundled third-party skills carefully and confirm that your redistribution terms match the upstream rights you actually have.
