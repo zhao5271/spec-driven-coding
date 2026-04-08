@@ -7,13 +7,15 @@ description: >-
   `changes/templates/`, draft or update `spec.md` and `tasks.md` for a feature
   or bugfix, enforce Reverse Sync when implementation drifts from the plan,
   define the top-level coding workflow for a repository, or combine a
-  spec-first process with execution-only companion skills such as TDD,
-  debugging, verification, and code review without letting those skills replace
-  the main planning flow. Trigger this skill for requests like: set up
-  spec-driven coding, create a change package, write the spec first,
+  spec-first process or spec-driven development flow with execution-only
+  companion skills such as TDD, debugging, verification, and code review
+  without letting those skills replace the main planning flow. Trigger this
+  skill for requests like: set up spec-driven coding, spec-driven development,
+  spec first development, create a change package, write the spec first,
   spec-first workflow, create spec and tasks, new feature with spec, refactor
-  with spec, bugfix with spec, 修 bug 先写 spec, 先建 change package, 先写
-  spec 再动代码, or 大改动先做规格和任务拆分.
+  with spec, bugfix with spec, change package workflow, spec.md and tasks.md
+  workflow, 修 bug 先写 spec, 先建 change package, 先写 spec 再动代码, or
+  大改动先做规格和任务拆分.
 ---
 
 # Spec-Driven Coding
