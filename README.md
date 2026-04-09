@@ -1,38 +1,27 @@
 # Spec-Driven Coding
 
-Spec-first coding workflow for Codex.
+`spec-driven-coding` is a spec-first workflow for Codex that keeps planning in files instead of chat memory.
 
-Use it when you want planning to live in files instead of chat memory:
+Use it when you want a repeatable flow like:
 
-- `change.toml` for machine-readable change state
-- `spec.md` for the plan
-- `tasks.md` for the execution snapshot
-- `log.md` for chronological progress
+`spec.md -> tasks.md -> implementation -> verification`
 
-## 30-Second Start
+It is designed to help you:
 
-Remember this line:
-
-`建包 -> 写规 -> 开做 -> 续做 -> 校验 -> 收尾`
-
-Meaning:
-
-- `建包`: create the change package
-- `写规`: write or refine `spec.md`
-- `开做`: move into execution with approved plan
-- `续做`: resume with `change_catchup.py`
-- `校验`: run `validate_change.py`
-- `收尾`: close with `close_change.py`
+- initialize a repository with a reusable `code_copilot/` workflow package
+- create a change package before coding
+- keep `spec.md` and `tasks.md` as the source of truth during execution
+- recover context cleanly when a session resumes
 
 ## Quick Start
 
-Install the main skill:
+Install the main skill from GitHub:
 
 ```bash
 npx skills add zhao5271/spec-driven-coding -g -y
 ```
 
-Or install the full bundle:
+Install the full bundle from this repository:
 
 ```bash
 git clone git@github.com:zhao5271/spec-driven-coding.git
@@ -40,7 +29,11 @@ cd spec-driven-coding
 ./install.sh
 ```
 
-## Fastest Way To Use It
+Choose the root skill install if you only want the main workflow.
+
+Choose the bundle install if you also want the companion skills included in this repository.
+
+## First Prompt
 
 Initialize a repository:
 
@@ -48,53 +41,41 @@ Initialize a repository:
 用 $spec-driven-coding 为这个仓库初始化 code_copilot
 ```
 
-Core commands:
+Start a new change:
 
-```bash
-python3 scripts/create_change.py --target /path/to/repo --name add-bulk-import --title "Add bulk import flow"
-python3 scripts/update_task_fields.py --target /path/to/repo --change add-bulk-import --task-id T1 --goal "Add request validation"
-python3 scripts/approve_change.py --target /path/to/repo --change add-bulk-import
-python3 scripts/update_change_status.py --target /path/to/repo --change add-bulk-import --status in_progress --current-task T1
-python3 scripts/validate_change.py --target /path/to/repo --change add-bulk-import
-python3 scripts/close_change.py --target /path/to/repo --change add-bulk-import
+```text
+用 $spec-driven-coding 先为“用户批量导入”创建 change package，再写 spec 和 tasks
 ```
 
-`Depends on` in `tasks.md` is enforced. If `T2` depends on `T1`, `T2` cannot start until `T1` is `done`.
+Ask for help:
 
-## Mnemonic
+```text
+$spec-driven-coding --help
+```
 
-Use these short prompts:
+## Workflow Cheatsheet
 
-- `建包`
-- `写规`
-- `开做`
-- `续做`
-- `校验`
-- `收尾`
+The short command sequence is:
 
-Meaning:
+`建包 -> 写规 -> 开整 -> 续做 -> 校验 -> 收尾`
 
-- `建包`: create the change package
-- `写规`: write or refine `spec.md`
-- `开做`: move from planning into execution
-- `续做`: resume with `change_catchup.py`
-- `校验`: run `validate_change.py`
-- `收尾`: close with `close_change.py`
+- `建包`: initialize `code_copilot/` for the current repository
+- `写规`: create a change and draft `spec.md` and `tasks.md`
+- `开整`: continue implementation from the approved plan
+- `续做`: scan existing changes and recover execution context
+- `校验`: move the change into verification and check close readiness
+- `收尾`: close the change package
 
-## Execution Order
+## What This Creates
 
-1. `create_change.py`
-2. fill `spec.md` and `tasks.md`
-3. `approve_change.py`
-4. `update_change_status.py --status in_progress --current-task T1`
-5. implement and verify
-6. `update_change_status.py --status verifying`
-7. `validate_change.py`
-8. `close_change.py`
+When you initialize a repository, the workflow creates a `code_copilot/` package with:
 
-## What Gets Created
+- `rules/` for stable project rules
+- `knowledge/` for durable project knowledge
+- `agents/` for reusable execution guidance
+- `changes/templates/` for change-package templates
 
-Each change package contains:
+When you start a real feature or bugfix, the workflow creates:
 
 - `change.toml`
 - `spec.md`
@@ -103,35 +84,83 @@ Each change package contains:
 - `decisions.md`
 - `review.md`
 
+The working rule is simple:
+
+- no spec before code
+- `spec.md` is the plan
+- `tasks.md` is the execution snapshot
+- `log.md` is the chronological record
+
 ## Included Skills
 
 Main workflow:
 
 - `spec-driven-coding`
 
-Companions:
+Companion skills in the full bundle:
 
-- `frontend-design`
-- `api-design-principles`
-- `postgresql-table-design`
-- `test-driven-development`
-- `systematic-debugging`
-- `verification-before-completion`
-- `requesting-code-review`
+- `frontend-design` for UI-heavy work
+- `api-design-principles` for API and contract work
+- `postgresql-table-design` for PostgreSQL schema work
+- `test-driven-development` for new implementation and refactors
+- `systematic-debugging` for bug investigation
+- `verification-before-completion` for finish-gate validation
+- `requesting-code-review` for risky changes
 
-## Repository Layout
+## Core Scripts
 
-```text
-spec-driven-coding/
-├── SKILL.md
-├── agents/
-├── references/
-├── scripts/
-├── templates/
-└── skills/
+The root skill ships these workflow scripts:
+
+```bash
+python3 scripts/scaffold_package.py --target /path/to/repo --project-name my-app
+python3 scripts/create_change.py --target /path/to/repo --name add-bulk-import --title "Add bulk import flow"
+python3 scripts/approve_change.py --target /path/to/repo --change add-bulk-import
+python3 scripts/update_change_status.py --target /path/to/repo --change add-bulk-import --status in_progress --current-task T1
+python3 scripts/change_catchup.py --target /path/to/repo --change add-bulk-import
+python3 scripts/validate_change.py --target /path/to/repo --change add-bulk-import
+python3 scripts/close_change.py --target /path/to/repo --change add-bulk-import
 ```
 
-## References
+## Install Options
+
+Two supported ways to use this project:
+
+- `npx skills add zhao5271/spec-driven-coding -g -y`
+  This installs the root workflow skill from GitHub.
+- `git clone ... && ./install.sh`
+  This installs the full bundle, including companion skills.
+
+If you want a pinned release, use a Git tag or a specific repository revision in your own install workflow.
+
+More detail is in [references/public-install-and-release.md](references/public-install-and-release.md).
+
+## FAQ
+
+### Does this require a specific tech stack?
+
+No. The workflow is intentionally generic. It works best when you record the real stack details in the generated `rules/` files.
+
+### Do I need the full bundle?
+
+No. If you only want the main planning workflow, install the root skill. Use the full bundle if you want the companion skills ready to go.
+
+### Can I use it with other execution-focused skills?
+
+Yes. That is the intended model. `spec-driven-coding` owns planning, while execution-focused skills improve testing, debugging, verification, or review.
+
+### What should I type first?
+
+Usually one of these:
+
+```text
+用 $spec-driven-coding 为这个仓库初始化 code_copilot
+```
+
+```text
+用 $spec-driven-coding 先写 spec 和 tasks，再开始改这个功能
+```
+
+### Where can I read more?
 
 - `references/workflow.md`
 - `references/spec-checklists.md`
