@@ -1,0 +1,16 @@
+name = "{{ change_name }}"
+title = "{{ change_title }}"
+status = "draft"
+owner = "codex"
+created_at = "{{ timestamp }}"
+updated_at = "{{ timestamp }}"
+approved_by_user = false
+current_phase = "planning"
+current_task = ""
+next_task = ""
+blockers = []
+last_touched_files = []
+last_verification_command = ""
+last_verification_result = ""
+last_known_failing_point = ""
+next_concrete_command = ""

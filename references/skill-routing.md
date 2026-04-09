@@ -1,47 +1,44 @@
 # Skill Routing
 
-Use these companion skills to keep work specialized and consistent.
+Use this file when you want a short explanation of which companion skill fits a work slice.
 
-Keep this skill as the main workflow owner. Companion skills should deepen one work slice or improve execution quality, not create a second planning system.
+Keep `spec-driven-coding` as the workflow owner. Companion skills help one slice of work or improve execution quality; they do not replace `change.toml`, `spec.md`, `tasks.md`, or Reverse Sync.
 
-## Frontend
+## Domain Routing
 
-Use `frontend-design` when the task includes:
+### Frontend
 
-- pages or components
-- visual polish, layout, styling, or interaction
-- forms, tables, dashboards, or admin UI
+Use `frontend-design` for:
 
-This is the default recommendation for UI-heavy implementation work.
+- pages and components
+- layout, styling, and interaction
+- forms, tables, dashboards, and admin UI
 
-## Backend API
+### Backend API
 
-Use `api-design-principles` when the task includes:
+Use `api-design-principles` for:
 
+- request or response contract work
 - REST API design or review
-- request and response contract changes
-- pagination, filtering, status codes, and error design
-- API versioning or documentation decisions
+- pagination, filtering, and error-response design
 
-This is the default recommendation for backend API design work.
+### Database
 
-## Database
+Use `postgresql-table-design` for:
 
-Use `postgresql-table-design` when the task includes:
+- schema and index design
+- constraints and foreign keys
+- PostgreSQL-specific patterns such as JSONB and partitioning
 
-- PostgreSQL schema design
-- table, index, foreign key, or constraint design
-- JSONB, partitioning, or Postgres-specific performance patterns
+## Execution Routing
 
-If the project uses another database, adapt the design thinking carefully and avoid copying PostgreSQL-only features directly.
+Use these only after a change package exists:
 
-## Execution Discipline
+- `test-driven-development` for new implementation or refactor work
+- `systematic-debugging` for diagnosis and flaky behavior
+- `verification-before-completion` before claiming completion
+- `requesting-code-review` for risky or wide-scope changes
 
-Use these execution-only skills when the change package already exists and you want stronger implementation discipline:
+## Routing Rule
 
-- `test-driven-development` for new features or refactors
-- `systematic-debugging` for bug investigation or flaky behavior
-- `verification-before-completion` before claiming a fix or feature is complete
-- `requesting-code-review` for broad, risky, or merge-sensitive changes
-
-Do not use these to replace `spec.md`, `tasks.md`, or Reverse Sync.
+If multiple domains are involved, keep planning here and pull in only the companion skills that match the current slice.

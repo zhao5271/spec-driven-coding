@@ -1,130 +1,133 @@
 ---
 name: spec-driven-coding
 description: >-
-  Initialize and operate a lightweight Spec-driven coding workflow for any
-  software repository. Use when Codex needs to scaffold or maintain
-  `code_copilot/`, create reusable `rules/`, `knowledge/`, and
-  `changes/templates/`, draft or update `spec.md` and `tasks.md` for a feature
-  or bugfix, enforce Reverse Sync when implementation drifts from the plan,
-  define the top-level coding workflow for a repository, or combine a
-  spec-first process or spec-driven development flow with execution-only
-  companion skills such as TDD, debugging, verification, and code review
-  without letting those skills replace the main planning flow. Trigger this
-  skill for requests like: set up spec-driven coding, spec-driven development,
-  spec first development, create a change package, write the spec first,
+  Run a lightweight spec-first workflow for any repository. Use when Codex
+  should scaffold or maintain `code_copilot/`, create a change package, write
+  `spec.md` and `tasks.md` before implementation, enforce Reverse Sync, and
+  keep planning owned by this skill while execution skills such as TDD,
+  debugging, verification, and review stay subordinate. Triggers include:
+  set up spec-driven coding, create a change package, write the spec first,
   spec-first workflow, create spec and tasks, new feature with spec, refactor
-  with spec, bugfix with spec, change package workflow, spec.md and tasks.md
-  workflow, 修 bug 先写 spec, 先建 change package, 先写 spec 再动代码, or
-  大改动先做规格和任务拆分.
+  with spec, bugfix with spec, 修 bug 先写 spec, 先建 change package, 先写
+  spec 再动代码, 大改动先做规格和任务拆分, 用 spec-driven coding 流程走,
+  先出变更包, 先写 spec 和 tasks, 先建规格包, 先进入规格驱动, 先按
+  spec-first 来做.
 ---
 
 # Spec-Driven Coding
 
-## Overview
+## What This Skill Owns
 
-Use this skill as a spec-driven development and spec-first development workflow for real coding work. Keep implementation grounded in explicit specs instead of ad hoc chat memory: start with a small reusable package, write the change down, split it into verifiable tasks, then code against the written plan.
+Use this skill when planning must live in files instead of chat memory.
 
-This skill is the primary workflow owner. If other process-heavy skills are also available, keep this skill in charge of change-package structure, `spec.md`, `tasks.md`, and Reverse Sync.
+This skill owns:
 
-Typical trigger phrases:
+- `code_copilot/changes/<change>/change.toml`
+- `spec.md`
+- `tasks.md`
+- `log.md`
+- Reverse Sync when implementation drifts from plan
+
+Execution-focused skills may help with testing, debugging, verification, and review, but they must not replace this planning system.
+
+## Good Trigger Phrases
 
 - "set up spec-driven coding"
-- "spec-driven development"
-- "spec first development"
 - "create a change package"
-- "change package workflow"
 - "write the spec first"
-- "spec.md and tasks.md workflow"
 - "new feature with spec"
 - "refactor with spec"
 - "bugfix with spec"
-- "先建 change package"
-- "先写 spec 再动代码"
+- "用 spec-driven coding 流程走"
+- "先出变更包"
+- "先写 spec 和 tasks"
+- "先建规格包"
+- "先进入规格驱动"
 - "修 bug 先写 spec"
 - "大改动先做规格和任务拆分"
 
-## Workflow Decision Tree
+Short prompts:
 
-1. Need to initialize a repository for Spec-driven coding?
-   Run `scripts/scaffold_package.py`.
+- "建包"
+- "写规"
+- "开整"
+- "续做"
+- "校验"
+- "收尾"
 
-2. Need to start a real feature or bugfix?
-   Run `scripts/create_change.py`, then fill `spec.md` and `tasks.md`.
+## Help Output
 
-3. Need help deciding what belongs in a spec?
-   Read `references/workflow.md` and `references/spec-checklists.md`.
+When the user asks for `$spec-driven-coding --help`, reply with a concise command list first instead of restating the whole workflow.
 
-4. Need more concrete task breakdown examples?
-   Read `references/task-splitting-examples.md`.
+Routing rule:
 
-5. Need stack adaptation guidance instead of hardcoded defaults?
-   Read `references/stack-conventions.md`.
+- Treat `$spec-driven-coding --help`, `spec-driven-coding --help`, and close variants such as `帮我看下 spec-driven-coding help` as a help request
+- For a help request, return help text only
+- Do not initialize `code_copilot/`
+- Do not create a change package
+- Do not start planning or implementation
+- Do not ask approval questions unless the user follows up with an execution command
 
-6. Need to pull in the right companion skill for frontend, API, database, or Go-specialized work?
-   Read `references/skill-routing.md` and `references/skill-decision-table.md`.
-
-## Core Capabilities
-
-### 1. Initialize the Minimal Execution Package
-
-Create this structure inside the target repository:
+Recommended help text:
 
 ```text
-code_copilot/
-├── agents/
-├── rules/
-├── knowledge/
-└── changes/
-    └── templates/
+$spec-driven-coding --help
+
+可用指令：
+- 建包：为当前仓库初始化 `code_copilot/`
+- 写规：创建 change 并起草 `spec.md` / `tasks.md`
+- 续做：扫描现有 change，恢复当前上下文
+- 开整：在已有 spec / tasks 基础上推进实现
+- 校验：进入 `verifying` 并检查是否满足关闭条件
+- 收尾：更新状态并关闭 change
+
+常用完整触发词：
+- 用 spec-driven coding 流程走
+- 先出变更包
+- 先写 spec 和 tasks
+- 先建规格包
+- 修 bug 先写 spec
+
+工作规则：
+- No Spec, No Code
+- Spec is Truth
+- `tasks.md` 是执行快照
+- `log.md` 是会话日志
 ```
 
-Run:
+Command intent:
+
+- `建包`: initialize `code_copilot/` for the current repository
+- `写规`: create a change package and draft `spec.md` plus `tasks.md`
+- `续做`: inspect existing changes and rebuild the current execution context
+- `开整`: continue execution from approved spec and tasks
+- `校验`: move the change into verification and run close-readiness checks
+- `收尾`: update final status and close the change package
+
+If the user gives one of the short commands directly, interpret it as the matching workflow stage above.
+
+Preferred reply order:
+
+1. Show the short command list
+2. Show the common full trigger phrases
+3. Show the working rules only if they add decision value
+4. End by waiting for the user to choose a command
+
+Do not expand into the full "Main Flow" section during `--help` unless the user explicitly asks for details.
+
+## Main Flow
+
+### 1. Initialize
+
+Run once per repository:
 
 ```bash
-python3 scripts/scaffold_package.py \
-  --target /path/to/repo \
-  --project-name my-app \
-  --runtime "python" \
-  --backend "fastapi" \
-  --frontend "react + vite" \
-  --database "postgres" \
-  --cache "redis"
+python3 scripts/scaffold_package.py --target /path/to/repo --project-name my-app
 ```
 
-Optional fields:
+This creates `code_copilot/` with `rules/`, `knowledge/`, `agents/`, and `changes/templates/`.
 
-- `--identifier`: module name, package name, workspace name, or repo identifier
-- `--async-stack`: queue, worker, stream, or job stack
-- `--test-command`: default validation command for the repository
-
-The script creates:
-
-- `rules/project-context.md`
-- `rules/coding-style.md`
-- `rules/security.md`
-- `rules/domain-rules.md`
-- `rules/api-contracts.md`
-- `rules/response-pattern.md`
-- `rules/recommended-skills.md`
-- `rules/skill-decision-table.md`
-- `knowledge/index.md`
-- `agents/copilot-prompt.md`
-- `agents/execution-sop.md`
-- `changes/templates/spec.md`
-- `changes/templates/tasks.md`
-- `changes/templates/log.md`
-- `changes/templates/task-examples/api-endpoint-tasks.md`
-- `changes/templates/task-examples/ui-flow-tasks.md`
-- `changes/templates/task-examples/background-job-tasks.md`
-- `changes/templates/task-examples/data-migration-tasks.md`
-- `changes/templates/examples/api-change.md`
-- `changes/templates/examples/ui-change.md`
-- `changes/templates/examples/async-job-change.md`
-- `changes/templates/examples/data-migration-change.md`
-
-### 2. Create a New Change Package
-
-Create a change directory before coding:
+### 2. Create a Change
 
 ```bash
 python3 scripts/create_change.py \
@@ -135,155 +138,94 @@ python3 scripts/create_change.py \
 
 This creates:
 
-- `code_copilot/changes/add-bulk-import/spec.md`
-- `code_copilot/changes/add-bulk-import/tasks.md`
-- `code_copilot/changes/add-bulk-import/log.md`
+- `change.toml`
+- `spec.md`
+- `tasks.md`
+- `log.md`
+- `decisions.md`
+- `review.md`
 
-Then:
+### 3. Plan Before Code
 
-1. Fill `spec.md` with current facts and boundaries.
-2. Split the work into atomic tasks in `tasks.md`.
-3. Start implementation only after the user confirms the spec.
+Fill `spec.md`, then `tasks.md`.
 
-### 3. Draft Good Specs
+Minimum `spec.md` contents:
 
-Use this minimum structure in `spec.md`:
-
-- Background and goal
-- Current code reality with file-path evidence
-- Functional changes
+- background and goal
+- current code reality with file evidence
+- functional change points
 - API, data, and integration changes
-- Risks and review points
-- Test and verification strategy
-- Open questions
+- risks and review points
+- verification strategy
+- open questions
 
-Read `references/spec-checklists.md` when the change touches:
+Minimum task rules:
 
-- public APIs or client contracts
-- database schema or migrations
-- cache, jobs, queues, or async workers
-- frontend pages, forms, or state flows
-- authentication, authorization, or sensitive data
-- deployment, config, or rollout behavior
+- every task has a stable `Task ID`
+- every task has `Goal`, `Files`, `Verification`, and `Expected outcome`
+- use `Depends on` for real dependencies
+- `Depends on` is enforced, not advisory
 
-### 4. Split Work into Atomic Tasks
+### 4. Approve and Execute
 
-Keep tasks small and verifiable:
+After the user confirms the plan:
 
-- Prefer one task per clear intent.
-- Prefer 3 to 5 files per task.
-- Name concrete files, entry points, and target functions.
-- Attach one verification method per task.
+```bash
+python3 scripts/approve_change.py --target /path/to/repo --change add-bulk-import
+python3 scripts/update_change_status.py --target /path/to/repo --change add-bulk-import --status in_progress --current-task T1
+```
 
-Good task names:
+Useful helper:
 
-- Add request schema and boundary validation
-- Implement service branch for retry-safe import
-- Add repository query and migration for status index
-- Update client request mapping and result rendering
+```bash
+python3 scripts/update_task_fields.py --target /path/to/repo --change add-bulk-import --task-id T1 --goal "Add request validation"
+```
 
-Avoid vague task names:
+### 5. Validate and Close
 
-- Finish backend
-- Handle everything in worker
-- Complete frontend updates
+```bash
+python3 scripts/update_change_status.py --target /path/to/repo --change add-bulk-import --status verifying
+python3 scripts/validate_change.py --target /path/to/repo --change add-bulk-import
+python3 scripts/close_change.py --target /path/to/repo --change add-bulk-import
+```
 
-### 5. Enforce Reverse Sync
-
-When implementation diverges from the plan:
-
-1. Stop coding.
-2. Update `spec.md` first.
-3. Update `tasks.md` if the execution path changed.
-4. Resume implementation only after the written plan matches reality.
-
-Treat these as hard rules:
+## Operating Rules
 
 - No Spec, No Code
 - Spec is Truth
-- Reverse Sync
+- Reverse Sync before more implementation
+- `tasks.md` is the execution snapshot
+- `log.md` is the chronological session journal
+- If `tasks.md` or `log.md` is stale, fix it before continuing
 
-### 6. Adapt to Repository Reality
+## Resume Work
 
-This skill is intentionally generic. Do not force one stack's conventions onto another repository.
+Use:
 
-Always record the real project constraints in `rules/project-context.md`:
+```bash
+python3 scripts/change_catchup.py --target /path/to/repo
+python3 scripts/change_catchup.py --target /path/to/repo --change add-bulk-import
+python3 scripts/change_catchup.py --target /path/to/repo --list
+```
 
-- runtime and package layout
-- backend and frontend entry points
-- shared contracts and generated clients
-- test, build, and migration commands
-- deployment, config, and secret boundaries
-
-Put stable domain rules in `rules/` and durable business knowledge in `knowledge/`. Keep one-off implementation details inside each change log.
+Read the reported `spec.md`, `tasks.md`, and `log.md` before relying on old chat history.
 
 ## Companion Skills
 
-Use companion skills deliberately based on the work slice.
-
-- Use `frontend-design` for pages, components, styling, interaction, and UI-heavy changes.
-- Use `api-design-principles` for API design, contract review, pagination, filtering, and error responses.
-- Use `postgresql-table-design` for PostgreSQL schema, indexing, constraints, and JSONB or partitioning design.
-
-### Execution Pairing With Superpowers
-
-Use this skill as the top-level workflow and only borrow execution-focused skills from `superpowers`.
-
-Approved pairings:
-
-- New feature or refactor: `test-driven-development` plus `verification-before-completion`
-- Bug investigation or flaky behavior: `systematic-debugging` plus `verification-before-completion`
-- Large change or risky merge candidate: `requesting-code-review`
-
-Keep responsibilities split like this:
-
-- `spec-driven-coding` owns change-package creation, spec boundaries, task decomposition, and Reverse Sync
-- Execution-focused companion skills own testing discipline, debugging method, validation rigor, and review requests
-
-Do not let `superpowers` replace the main plan:
-
-- Do not use `using-superpowers` as the top-level rule system
-- Do not maintain two planning systems in parallel, such as `code_copilot/changes/...` and `docs/superpowers/plans/...`
-- Do not let `writing-plans` replace `code_copilot/changes/<change-name>/tasks.md`
-
-If instructions conflict, prefer this skill's document locations and change-management rules. `spec.md` remains the single source of truth.
-
-Read `references/superpowers-integration.md` when you need the fuller pairing guide, conflict rules, or scenario recipes.
-
-## Execution Recipes
-
-Use these default operating sequences unless the repository has a better established workflow:
-
-### New Feature or Refactor
-
-1. Create the change package with `scripts/create_change.py`
-2. Write or update `spec.md`
-3. Split the work in `tasks.md`
-4. Implement with `test-driven-development`
-5. Verify with `verification-before-completion`
-
-### Bugfix
-
-1. Create or update the change package
-2. Record the current understanding and failure shape in `spec.md`
-3. Update `tasks.md` with the investigation and fix path
-4. Investigate with `systematic-debugging`
-5. Verify with `verification-before-completion`
-
-### Large or High-Risk Change
-
-1. Keep the change package current
-2. Finish implementation against the written tasks
-3. Request review with `requesting-code-review`
-4. If review changes the plan, update `spec.md` and `tasks.md` before continuing
+- UI-heavy work: `frontend-design`
+- API and contract work: `api-design-principles`
+- PostgreSQL schema work: `postgresql-table-design`
+- New implementation: `test-driven-development`
+- Bug investigation: `systematic-debugging`
+- Finish gate: `verification-before-completion`
+- Risky changes: `requesting-code-review`
 
 ## References
 
-- Read `references/workflow.md` for the end-to-end operating model.
-- Read `references/spec-checklists.md` when drafting or reviewing a concrete change package.
-- Read `references/stack-conventions.md` when adapting the workflow to an existing runtime, framework, and repo layout.
-- Read `references/task-splitting-examples.md` when you need more concrete task decomposition.
-- Read `references/skill-routing.md` when you need to choose the right companion skill.
-- Read `references/skill-decision-table.md` when you want the compact routing view.
-- Read `references/superpowers-integration.md` when combining this skill with execution-focused `superpowers` skills.
-- Read `references/中文说明.md` when you want a longer Chinese reading version.
+- `references/workflow.md` for the compact end-to-end flow
+- `references/spec-checklists.md` for concrete spec review questions
+- `references/task-splitting-examples.md` for example decompositions
+- `references/stack-conventions.md` for adapting to real repository shapes
+- `references/skill-routing.md` and `references/skill-decision-table.md` for companion-skill routing
+- `references/superpowers-integration.md` for conflict rules when pairing with execution-only skills
+- `references/中文说明.md` for the short Chinese reading version

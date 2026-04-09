@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import argparse
 import re
+from datetime import datetime, timezone
 from pathlib import Path
 
 
@@ -20,6 +21,32 @@ def read_template(path: Path) -> str:
 def write(path: Path, content: str) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(content, encoding="utf-8")
+
+
+def now_iso() -> str:
+    return datetime.now(timezone.utc).astimezone().isoformat(timespec="seconds")
+
+
+def render_template(content: str, context: dict[str, str]) -> str:
+    rendered = content
+    for key, value in context.items():
+        rendered = rendered.replace(f"{{{{ {key} }}}}", value)
+    return rendered
+
+
+def materialize_change(templates: Path, change_dir: Path, context: dict[str, str]) -> list[Path]:
+    created: list[Path] = []
+    for template in sorted(templates.rglob("*")):
+        if not template.is_file():
+            continue
+        relative = template.relative_to(templates)
+        if relative.parts and relative.parts[0] in {"examples", "task-examples"}:
+            continue
+        destination = change_dir / relative
+        content = render_template(read_template(template), context)
+        write(destination, content)
+        created.append(destination)
+    return created
 
 
 def main() -> int:
@@ -43,18 +70,19 @@ def main() -> int:
     if change_dir.exists() and any(change_dir.iterdir()) and not args.force:
         raise SystemExit(f"Change already exists: {change_dir}")
 
-    spec = read_template(templates / "spec.md").replace("# Change Spec", f"# {args.title}")
-    tasks = read_template(templates / "tasks.md").replace("# Tasks", f"# Tasks - {args.title}")
-    log = read_template(templates / "log.md").replace("# Change Log", f"# Change Log - {args.title}")
+    if not templates.exists():
+        raise SystemExit(f"Templates directory not found: {templates}")
 
-    write(change_dir / "spec.md", spec)
-    write(change_dir / "tasks.md", tasks)
-    write(change_dir / "log.md", log)
+    context = {
+        "change_name": change_name,
+        "change_title": args.title,
+        "timestamp": now_iso(),
+    }
+    created = materialize_change(templates, change_dir, context)
 
     print(f"Created change package: {change_dir}")
-    print(change_dir / "spec.md")
-    print(change_dir / "tasks.md")
-    print(change_dir / "log.md")
+    for path in created:
+        print(path)
     return 0
 
 

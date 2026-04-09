@@ -1,4 +1,4 @@
 interface:
   display_name: "Spec-Driven Coding"
-  short_description: "Spec-driven development and spec-first workflow for change packages, spec.md, tasks.md, and execution-skill pairing"
-  default_prompt: "Use $spec-driven-coding for spec-driven development: create or run a code_copilot change package workflow, write spec.md before coding, keep tasks.md as the canonical task list, and pair with execution-only skills such as TDD, debugging, verification, or code review without replacing the main planning flow."
+  short_description: "Spec-first workflow for change packages, tasks, and execution-skill pairing"
+  default_prompt: "Use $spec-driven-coding to create or run a code_copilot change workflow, write spec.md before coding, keep tasks.md as the canonical task list, and pair with execution-only skills such as TDD, debugging, verification, or code review without replacing the main planning flow."

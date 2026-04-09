@@ -13,6 +13,23 @@ def write_file(path: Path, content: str, force: bool) -> str:
     return f"write {path}"
 
 
+def copy_template_tree(src: Path, dst: Path, force: bool) -> list[str]:
+    outputs: list[str] = []
+    if not src.exists():
+        return outputs
+    for template in sorted(src.rglob("*")):
+        if template.is_dir():
+            continue
+        target = dst / template.relative_to(src)
+        target.parent.mkdir(parents=True, exist_ok=True)
+        if target.exists() and not force:
+            outputs.append(f"skip {target}")
+            continue
+        target.write_text(template.read_text(encoding="utf-8"), encoding="utf-8")
+        outputs.append(f"write {target}")
+    return outputs
+
+
 def value_or_todo(value: str) -> str:
     return value or "TODO"
 
@@ -302,10 +319,15 @@ Always:
 10. Use `systematic-debugging` for bug investigation before patching.
 11. Use `verification-before-completion` before claiming completion.
 12. Use `requesting-code-review` for risky changes that need an explicit review checkpoint.
+13. Before each meaningful implementation slice, update `Current task` and mark the matching task `in_progress`.
+14. After each meaningful implementation or verification slice, immediately refresh `Next task`, `Blockers`, resume fields, and `log.md`.
+15. Treat stale `tasks.md` or `log.md` as a process bug and fix them before continuing.
 """,
         root / "agents" / "execution-sop.md": """# Spec-Driven Execution SOP
 
 Operating rule: create or update the change package first, then borrow execution-only skills for implementation discipline.
+
+Operating mode: light-auto. Progress updates happen during execution, not as an end-of-session cleanup task.
 
 ## Step 1
 
@@ -336,7 +358,15 @@ Add execution discipline when appropriate:
 
 ## Step 5
 
-Implement task by task and record key findings in `log.md`.
+Implement task by task.
+
+For every meaningful work slice:
+
+1. Update `Current task` and task status before coding.
+2. Make the code change.
+3. Run verification.
+4. Immediately update `Next task`, `Blockers`, and the resume checklist in `tasks.md`.
+5. Immediately append the result to `log.md`.
 
 ## Step 6
 
@@ -345,218 +375,14 @@ If implementation diverges from the plan, update `spec.md` and `tasks.md` first.
 ## Step 7
 
 Review spec compliance, code quality, and verification evidence before closing the change.
-""",
-        root / "changes" / "templates" / "spec.md": """# Change Spec
 
-## Background and Goal
-
-- Business or product background:
-- Target outcome:
-- Non-goals:
-
-## Current Code Reality
-
-- Relevant files:
-- Current entry points:
-- Current service, job, or controller path:
-- Current client, UI, or consumer path:
-
-## Functional Changes
-
-- Server or backend changes:
-- Client or frontend changes:
-- Data, cache, or async changes:
-
-## API, Data, and Integration Changes
-
-- Request or input changes:
-- Response or output changes:
-- Database, schema, or migration changes:
-- Event, queue, or cache changes:
-
-## Risks and Review Points
-
-- Backward compatibility:
-- Concurrency, ordering, or transaction risk:
-- Security, auth, or privacy risk:
-- Rollback or fallback plan:
-
-## Verification Strategy
-
-- Build or compile:
-- Automated tests:
-- Manual verification path:
-- Logs, metrics, or dashboards to watch:
-
-## Open Questions
-
-- Question 1:
-""",
-        root / "changes" / "templates" / "tasks.md": """# Tasks
-
-## Task 1
-- Goal:
-- Files:
-- Verification:
-- Notes:
-
-## Task 2
-- Goal:
-- Files:
-- Verification:
-- Notes:
-
-## Task 3
-- Goal:
-- Files:
-- Verification:
-- Notes:
-""",
-        root / "changes" / "templates" / "log.md": """# Change Log
-
-## Decisions
-
-## Findings
-
-## Pitfalls
-
-## Spec Drift Notes
-""",
-        root / "changes" / "templates" / "task-examples" / "api-endpoint-tasks.md": """# Task Example - API Endpoint
-
-## Task 1
-- Goal: Add request schema and boundary validation.
-- Files: `server/routes/...`, `server/schemas/...`
-- Verification: Invalid input returns stable validation errors.
-
-## Task 2
-- Goal: Implement service logic and persistence changes.
-- Files: `server/services/...`, `server/repositories/...`
-- Verification: Main business flow passes automated tests.
-
-## Task 3
-- Goal: Update client request mapping and result rendering.
-- Files: `web/src/api/...`, `web/src/pages/...`
-- Verification: UI shows success, empty, and error states correctly.
-""",
-        root / "changes" / "templates" / "task-examples" / "ui-flow-tasks.md": """# Task Example - UI Flow
-
-## Task 1
-- Goal: Add or update the user-facing flow and page state model.
-- Files: `web/src/pages/...`, `web/src/state/...`
-- Verification: Main happy path works end to end.
-
-## Task 2
-- Goal: Align API calls, loading states, and error handling.
-- Files: `web/src/api/...`, `web/src/components/...`
-- Verification: Loading, retry, and validation states render correctly.
-
-## Task 3
-- Goal: Add tests or smoke coverage for the critical path.
-- Files: `web/tests/...`, `web/src/pages/...`
-- Verification: Critical UI behavior is covered by automated or scripted checks.
-""",
-        root / "changes" / "templates" / "task-examples" / "background-job-tasks.md": """# Task Example - Background Job
-
-## Task 1
-- Goal: Add job creation entry point and payload validation.
-- Files: `server/routes/...`, `server/jobs/...`
-- Verification: Job creation returns a stable job identifier.
-
-## Task 2
-- Goal: Implement worker-side execution, retries, and status updates.
-- Files: `worker/...`, `server/services/...`
-- Verification: Success and failure paths update job status correctly.
-
-## Task 3
-- Goal: Add operator or user-facing visibility for job progress.
-- Files: `web/src/pages/...`, `server/routes/...`
-- Verification: Users can see progress and completion state.
-""",
-        root / "changes" / "templates" / "task-examples" / "data-migration-tasks.md": """# Task Example - Data Migration
-
-## Task 1
-- Goal: Add schema or data migration with rollback notes.
-- Files: `migrations/...`, `db/...`
-- Verification: Migration applies and rolls back cleanly in a test environment.
-
-## Task 2
-- Goal: Update read and write paths to match the new data shape.
-- Files: `server/repositories/...`, `server/services/...`
-- Verification: Old and new records behave correctly during rollout.
-
-## Task 3
-- Goal: Add rollout checks, monitoring notes, or cleanup tasks.
-- Files: `code_copilot/changes/.../spec.md`, `ops/...`
-- Verification: Rollout checklist covers drift, errors, and fallback signals.
-""",
-        root / "changes" / "templates" / "examples" / "api-change.md": """# Example Change - API Endpoint
-
-## Typical Scope
-
-- add or update an endpoint
-- change request validation
-- adjust response contract
-- align frontend or consumer behavior
-
-## Review Focus
-
-- backward compatibility
-- error contract stability
-- validation coverage
-- consumer impact
-""",
-        root / "changes" / "templates" / "examples" / "ui-change.md": """# Example Change - UI Flow
-
-## Typical Scope
-
-- new page or modal flow
-- form validation changes
-- table or list rendering changes
-- client-side state and loading behavior
-
-## Review Focus
-
-- empty and error states
-- accessibility and interaction consistency
-- API alignment
-- regression coverage
-""",
-        root / "changes" / "templates" / "examples" / "async-job-change.md": """# Example Change - Async Job
-
-## Typical Scope
-
-- job creation API
-- worker execution logic
-- job status model
-- polling or notification flow
-
-## Review Focus
-
-- retry safety
-- idempotency
-- operator visibility
-- failure recovery
-""",
-        root / "changes" / "templates" / "examples" / "data-migration-change.md": """# Example Change - Data Migration
-
-## Typical Scope
-
-- schema migration
-- backfill or reindex
-- read and write path compatibility
-- rollout and cleanup plan
-
-## Review Focus
-
-- lock or performance risk
-- rollback safety
-- data correctness
-- rollout observability
+Before any completion claim, make sure `tasks.md` and `log.md` already reflect the final known state.
 """,
     }
 
     outputs = [write_file(path, content, args.force) for path, content in files.items()]
+    template_root = Path(__file__).resolve().parent.parent / "templates" / "changes"
+    outputs.extend(copy_template_tree(template_root, root / "changes" / "templates", args.force))
     print("\n".join(outputs))
     return 0
 

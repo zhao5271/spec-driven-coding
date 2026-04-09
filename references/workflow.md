@@ -1,34 +1,43 @@
 # Workflow
 
-Use this workflow when operating the skill inside a real repository.
+Use this when operating `spec-driven-coding` inside a real repository.
 
-This workflow remains the top-level control plane even when you also use execution-only companion skills such as TDD, debugging, verification, or code review. Those skills may improve how you execute a task, but they must not replace the `code_copilot/changes/...` package, `spec.md`, or `tasks.md`.
+## Core Rule
 
-Operating rule: create or update the change package first, then borrow execution-only skills to improve implementation quality.
+`spec-driven-coding` owns the planning system:
 
-## 1. Initialize
+- `change.toml`
+- `spec.md`
+- `tasks.md`
+- `log.md`
 
-Run `scripts/scaffold_package.py` once per repository.
+Execution-only skills may help, but they must not replace this structure.
 
-Goal:
+## End-to-End Flow
 
-- create a stable `code_copilot/` home
-- put project rules in files instead of chat history
-- make future changes reproducible
+### 1. Initialize
 
-## 2. Research
+Run once per repository:
+
+```bash
+python3 scripts/scaffold_package.py --target /path/to/repo --project-name my-app
+```
+
+### 2. Research
 
 Before drafting a spec:
 
 - read the relevant code paths
-- record exact file paths and function names
-- identify backend, frontend, database, cache, async, or external integration impact
+- record real file paths and entry points
+- identify API, database, cache, async, or UI impact
 
-Do not let the model invent architecture.
+### 3. Create and Plan
 
-## 3. Propose
+Create a change package:
 
-Create a change package with `scripts/create_change.py`.
+```bash
+python3 scripts/create_change.py --target /path/to/repo --name add-bulk-import --title "Add bulk import flow"
+```
 
 Then fill:
 
@@ -36,63 +45,55 @@ Then fill:
 - `tasks.md`
 - `log.md`
 
-Use this order inside `spec.md`:
+After the user confirms the plan:
 
-1. Background and goal
-2. Current code reality
-3. Functional change points
-4. API, data, and integration changes
-5. Risks
-6. Verification strategy
-7. Open questions
+```bash
+python3 scripts/approve_change.py --target /path/to/repo --change add-bulk-import
+```
 
-Do not move to execution while open questions still block the design.
+### 4. Execute
 
-## 4. Apply
+Move into implementation:
 
-Implement task by task.
+```bash
+python3 scripts/update_change_status.py --target /path/to/repo --change add-bulk-import --status in_progress --current-task T1
+```
 
-For each task:
+Useful helper:
 
-1. State the target files.
-2. Make the code change.
-3. Run verification.
-4. Record findings in `log.md`.
+```bash
+python3 scripts/update_task_fields.py --target /path/to/repo --change add-bulk-import --task-id T1 --goal "Add request validation"
+```
 
-Prefer evidence over confidence statements.
+Rules:
 
-If you bring in execution-oriented companion skills:
+- `Task ID` is required
+- `Depends on` is enforced
+- do not start a task until its dependencies are `done`
+- update `tasks.md` and `log.md` during execution, not afterward
 
-- use TDD for new feature or refactor implementation
-- use systematic debugging for bug investigation
-- use verification before completion as the finish gate
-- use code review requests for risky or wide-scope changes
+### 5. Verify and Close
 
-Keep them subordinate to the written spec and task list.
+```bash
+python3 scripts/update_change_status.py --target /path/to/repo --change add-bulk-import --status verifying
+python3 scripts/validate_change.py --target /path/to/repo --change add-bulk-import
+python3 scripts/close_change.py --target /path/to/repo --change add-bulk-import
+```
 
-## 5. Review
+### 6. Reverse Sync
 
-Review in two passes:
+If implementation drifts from the plan:
 
-1. Spec compliance
-   Check whether the code matches `spec.md`.
-2. Code quality
-   Check rules, error handling, tests, security, and maintainability.
+1. update `spec.md`
+2. update `tasks.md`
+3. continue coding
 
-## 6. Reverse Sync
+## Resume
 
-If code and spec diverge:
+```bash
+python3 scripts/change_catchup.py --target /path/to/repo
+python3 scripts/change_catchup.py --target /path/to/repo --change add-bulk-import
+python3 scripts/change_catchup.py --target /path/to/repo --list
+```
 
-1. Update `spec.md`
-2. Update `tasks.md`
-3. Resume coding
-
-Never silently let the code drift away from the spec.
-
-## 7. Archive and Distill
-
-After completion:
-
-- move durable lessons into `knowledge/`
-- keep `rules/` lean and stable
-- keep one-off implementation details in change logs only
+Read the reported files before relying on old chat history.
