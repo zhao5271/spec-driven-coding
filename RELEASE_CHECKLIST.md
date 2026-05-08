@@ -40,6 +40,7 @@ find "$TMPDIR" -maxdepth 1 -mindepth 1 -type d | sort
 ```
 
 - [ ] Confirm `spec-driven-coding` is installed from the root skill files
+- [ ] Confirm `templates/` is present under the installed `spec-driven-coding` folder (required by `create_change.py`)
 - [ ] Confirm all expected companion skill folders are installed
 - [ ] Re-run with `--force` if you changed overwrite behavior
 

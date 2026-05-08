@@ -56,6 +56,7 @@ cp -R "$ROOT_DIR/SKILL.md" "$main_target_path/"
 cp -R "$ROOT_DIR/agents" "$main_target_path/"
 cp -R "$ROOT_DIR/references" "$main_target_path/"
 cp -R "$ROOT_DIR/scripts" "$main_target_path/"
+cp -R "$ROOT_DIR/templates" "$main_target_path/"
 
 echo "Installed: $MAIN_SKILL_NAME -> $main_target_path"
 
